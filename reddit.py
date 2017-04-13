@@ -48,6 +48,7 @@ def messaging_events(payload):
 
 def send_message(token, recipient, text):
     """Send the message text to recipient with id recipient."""
+    payload = text
     kind = parse(text)
     for submission in reddit.subreddit('metal').hot(limit=25):
         payload = submission.url
