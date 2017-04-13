@@ -3,16 +3,19 @@ import json
 import requests
 from flask import Flask, request
 
+import secrets
+
 app = Flask(__name__)
 
 # This needs to be filled with the Page Acces Token that will be provided by the Facebook App when created.
-PAT = ''
+PAT = secrets.PAT
+verify_token = secrets.verify_token
 
 
-@app.route('/', method=['GET'])
+@app.route('/', methods=['GET'])
 def handle_verification():
     print("Handling Verification")
-    if requests.args.get('hub.verify_token', '') == 'my_voice_is_my_password_verify_me':
+    if requests.args.get('hub.verify_token', '') == verify_token:
         print("Verification successful!")
         return requests.args.get('hub.challenge', '')
     else:
