@@ -15,9 +15,9 @@ verify_token = secrets.verify_token
 @app.route('/', methods=['GET'])
 def handle_verification():
     print("Handling Verification")
-    if requests.args.get('hub.verify_token', '') == verify_token:
+    if request.args.get('hub.verify_token', '') == verify_token:
         print("Verification successful!")
-        return requests.args.get('hub.challenge', '')
+        return request.args.get('hub.challenge', '')
     else:
         print("Verification failed!")
         return "Error, wrong validation token"
@@ -26,7 +26,7 @@ def handle_verification():
 @app.route('/', methods=['POST'])
 def handle_messages():
     print("Handling messages")
-    payload = requests.get_data()
+    payload = request.get_data()
     print(payload)
     for sender, message in messaging_events(payload):
         print(f"Incoming from {sender}: {message}")
