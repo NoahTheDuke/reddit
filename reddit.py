@@ -53,9 +53,12 @@ def send_message(token, recipient, text):
     """Send the message text to recipient with id recipient."""
     payload = text
     kind = parse(text)
-    for submission in reddit.subreddit('metal').hot(limit=25):
-        payload = submission.url
-        break
+    if kind:
+        for submission in reddit.subreddit('metal').search(kind,
+                                                           sort='new',
+                                                           syntax='lucene'):
+            payload = submission.url
+            break
 
     r = requests.post('https://graph.facebook.com/v2.6/me/messages',
                       params={'access_token': token},
@@ -105,6 +108,7 @@ def parse(text):
     for word in (w.lower() for w in text.split()):
         if word in metal_kinds:
             return metal_kinds[word]
+    return False
 
 
 if __name__ == '__main__':
