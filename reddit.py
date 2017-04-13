@@ -52,6 +52,7 @@ def messaging_events(payload):
 def send_message(token, recipient, text):
     """Send the message text to recipient with id recipient."""
     kind = parse(text)
+    print(kind)
     if kind:
         for submission in reddit.subreddit('metal').search(f'flair:{kind}',
                                                            sort='new',
@@ -107,6 +108,7 @@ metal_kinds = {
 
 def parse(text):
     for word in (w.lower() for w in text.split()):
+        print(f'word: {word}')
         if word in metal_kinds:
             return metal_kinds[word]
     return False
