@@ -11,6 +11,9 @@ app = Flask(__name__)
 # This needs to be filled with the Page Acces Token that will be provided by the Facebook App when created.
 PAT = secrets.PAT
 verify_token = secrets.verify_token
+reddit = praw.Reddit(client_id=secrets.reddit_client_id,
+                     client_secret=secrets.reddit_client_secret,
+                     user_agent='heroku user agent')
 
 
 @app.route('/', methods=['GET'])
