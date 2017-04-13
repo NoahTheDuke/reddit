@@ -1,5 +1,6 @@
 import json
 
+import praw
 import requests
 from flask import Flask, request
 
@@ -47,14 +48,59 @@ def messaging_events(payload):
 
 def send_message(token, recipient, text):
     """Send the message text to recipient with id recipient."""
+    kind = parse(text)
+    for submission in reddit.subreddit('metal').hot(limit=25):
+        payload = submission.url
+        break
+
     r = requests.post('https://graph.facebook.com/v2.6/me/messages',
                       params={'access_token': token},
                       data=json.dumps({
                           'recipient': {'id': recipient},
-                          'message': {'text': text.decode('unicode_escape')}, }),
+                          'message': {'text': payload.decode('unicode_escape')}, }),
                       headers={'Content-type': 'application/json'})
     if r.status_code != requests.codes.ok:
         print(r.text)
+
+
+metal_kinds = {
+    'black': 'Black',
+    'black/death': 'Black/Death',
+    'black/thrash': 'Black/Thrash',
+    'crossover': 'Crossover',
+    'death': 'Death',
+    'death/doom': 'Death/Doom',
+    'death/grind': 'Death/Grind',
+    'death/thrash': 'Death/Thrash',
+    'dsbm': 'Depressive Black Metal',
+    'drone': 'Drone',
+    'folk': 'Folk',
+    'funeral': 'Funeral Doom',
+    'funeral/doom': 'Funeral Doom',
+    'goregrind': 'Goregrind',
+    'grind': 'Grind',
+    'melodeath': 'Melodeath',
+    'power': 'Power',
+    'progressive': 'Progressive',
+    'review': 'Review',
+    'sludge': 'Sludge',
+    'speed': 'Speed',
+    'stoner': 'Stoner',
+    'stoner/doom': 'Stoner Doom',
+    'symphonic': 'Symphonic',
+    'tech/death': 'Tech-Death',
+    'technical': 'Tech-Death',
+    'thrash': 'Thrash',
+    'trad/doom': 'Trad Doom',
+    'traditional': 'Traditional',
+    'underground': 'Underground',
+    'viking': 'Viking',
+}
+
+def parse(text):
+    for word in (w.lower() for w in text.split()):
+        if word in metal_kinds:
+            return metal_kinds[word]
 
 
 if __name__ == '__main__':
