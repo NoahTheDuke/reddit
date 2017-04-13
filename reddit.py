@@ -107,7 +107,7 @@ metal_kinds = {
 }
 
 def parse(text):
-    for word in (w.lower() for w in text.split()):
+    for word in (w.decode('unicode-escape').lower() for w in text.split()):
         print(f'word: {word}')
         if word in metal_kinds:
             return metal_kinds[word]
