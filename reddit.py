@@ -51,20 +51,21 @@ def messaging_events(payload):
 def send_message(token, recipient, text):
     """Send the message text to recipient with id recipient."""
     kind = parse(text)
+    text = "I'm sorry, I couldn't understand that. Please try again."
     if kind:
         for submission in reddit.subreddit('metal').search(f'flair:{kind}',
                                                            sort='new',
                                                            syntax='lucene'):
-            payload = submission.url
+            url = submission.url
+            title = submission.title
+            text = f'{title}\n{url}'
             break
-    else:
-        payload = text.decode('unicode-escape')
 
     r = requests.post('https://graph.facebook.com/v2.6/me/messages',
                       params={'access_token': token},
                       data=json.dumps({
                           'recipient': {'id': recipient},
-                          'message': {'text': payload}, }),
+                          'message': {'text': text}, }),
                       headers={'Content-type': 'application/json'})
     if r.status_code != requests.codes.ok:
         print(r.text)
@@ -89,7 +90,6 @@ metal_kinds = {
     '!melodeath': 'Melodeath',
     '!power': 'Power',
     '!progressive': 'Progressive',
-    '!review': 'Review',
     '!sludge': 'Sludge',
     '!speed': 'Speed',
     '!stoner': 'Stoner',
