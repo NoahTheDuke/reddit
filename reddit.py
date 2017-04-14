@@ -1,18 +1,17 @@
 import json
+import os
 
 import praw
 import requests
 from flask import Flask, request
 
-import secrets
-
 app = Flask(__name__)
 
 # This needs to be filled with the Page Acces Token that will be provided by the Facebook App when created.
-PAT = secrets.PAT
-verify_token = secrets.verify_token
-reddit = praw.Reddit(client_id=secrets.reddit_client_id,
-                     client_secret=secrets.reddit_client_secret,
+PAT = os.environ['Facebook_PAT']
+verify_token = os.environ['Facebook_verify_token']
+reddit = praw.Reddit(client_id=os.environ['reddit_client_id'],
+                     client_secret=os.environ['reddit_client_secret'],
                      user_agent='heroku user agent')
 
 
@@ -52,7 +51,6 @@ def messaging_events(payload):
 def send_message(token, recipient, text):
     """Send the message text to recipient with id recipient."""
     kind = parse(text)
-    print(kind)
     if kind:
         for submission in reddit.subreddit('metal').search(f'flair:{kind}',
                                                            sort='new',
@@ -108,7 +106,6 @@ metal_kinds = {
 
 def parse(text):
     for word in (w.decode('unicode-escape').lower() for w in text.split()):
-        print(f'word: {word}')
         if word in metal_kinds:
             return metal_kinds[word]
     return False
